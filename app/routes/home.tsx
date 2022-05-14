@@ -29,7 +29,7 @@ export default function Index() {
             </p>
           </div>
           <div className="text-sm mt-[40px]">
-            <form action="/logout" method="POST">
+            <form action="/auth/logout" method="POST">
               <button
                 name="_action"
                 value="delete"
