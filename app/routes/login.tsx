@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Layout } from '~/layout/layout';
-import { useActionData } from '@remix-run/react';
+import { useActionData, Link } from '@remix-run/react';
 import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
 import { loginUser, getUser } from '~/utils/auth.server';
 
@@ -83,6 +83,14 @@ export default function Login() {
                 >
                   Log in
                 </button>
+              </div>
+              <div>
+                <p className="text-sm text-center">
+                  I dont have an account?
+                  <span className="underline pl-1 text-green-500">
+                    <Link to="/register">Register</Link>
+                  </span>
+                </p>
               </div>
               <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">
                 {formError}
