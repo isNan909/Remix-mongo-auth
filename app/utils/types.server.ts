@@ -1,7 +1,7 @@
 export type RegisterForm = {
   email: string;
   password: string;
-  fullName: string;
+  fullName?: string;
 };
 
 export type LoginForm = {

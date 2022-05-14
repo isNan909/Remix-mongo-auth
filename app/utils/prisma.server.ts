@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === "production") {
 } else {
   if (!global.__db) {
     global.__db = new PrismaClient();
-    global.__db.$connect();
+    global.__db.$connect(); 
   }
   prisma = global.__db;
 }

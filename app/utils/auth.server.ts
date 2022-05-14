@@ -19,29 +19,26 @@ const storage = createCookieSessionStorage({
   },
 });
 
-export const registerUser = async (form: RegisterForm) => {
-  const userExist = await prisma.user.count({
-    where: {
-      email: form.email
-    }
-  });
-
-  if (userExist) {
-    return json({ error: `User already exists` }, { status: 400 });
+export const registerUser = async (user: RegisterForm) => {
+  const userExists = await prisma.user.count({ where: { email: user.email } });
+  if (userExists) {
+    return json(
+      { error: `User already exists with that email` },
+      { status: 400 }
+    );
   }
 
-  const newUser = await createUser(form);
+  const newUser = await createUser(user);
   if (!newUser) {
     return json(
       {
-        error: `User cannot be created.`,
-        fields: { email: form.email, password: form.password },
+        error: `Something went wrong trying to create a new user.`,
+        fields: { email: user.email, password: user.password },
       },
       { status: 400 }
     );
   }
-  //redirect to homepage if user already exists
-  return createUserSession(newUser.id, '/');
+  return createUserSession(newUser.id, "/");
 }
 
 export const loginUser = async ({ email, password }: LoginForm) => {
@@ -49,10 +46,11 @@ export const loginUser = async ({ email, password }: LoginForm) => {
     where: { email },
   });
 
-  if (!user || !(await bcrypt.compare(password, user.password)))
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     return json({ error: `Incorrect login` }, { status: 400 });
+  }
 
-  //redirect to homepage if user already exists
+  //redirect to homepage if user created
   return createUserSession(user.id, '/');
 }
 
