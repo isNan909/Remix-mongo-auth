@@ -1,8 +1,13 @@
+import { useState } from 'react';
 import { Layout } from '~/layout/layout';
 import { useActionData } from '@remix-run/react';
-import { ActionFunction } from '@remix-run/node';
-import { registerUser } from '~/utils/auth.server';
-import { RegisterForm } from '~/utils/types.server';
+import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
+import { registerUser, getUser } from '~/utils/auth.server';
+
+export const loader: LoaderFunction = async ({ request }) => {
+  // If user has active session, redirect to the homepage
+  return (await getUser(request)) ? redirect('/') : null;
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
@@ -31,7 +36,8 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const actionData = useActionData<RegisterForm>();
+  const actionData = useActionData();
+  const [formError, setFormError] = useState(actionData?.error || '');
 
   return (
     <>
@@ -101,6 +107,9 @@ export default function Register() {
               >
                 Register account
               </button>
+              <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">
+                {formError}
+              </div>
             </form>
           </div>
         </div>

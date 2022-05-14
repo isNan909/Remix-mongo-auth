@@ -1,14 +1,7 @@
-export default function Index() {
-  return (
-    <div className="text-center m-[30vh] block">
-      <div>
-        <h1 className="text-4xl text-green-600 font-bold pb-3">
-          Welcome to Remix Application
-        </h1>
-        <p className="text-slate-400">
-          Configured with TailwindCSS and Prisma ORM using MongoDB
-        </p>
-      </div>
-    </div>
-  );
-}
+import { LoaderFunction, redirect } from '@remix-run/node';
+import { requireUserId } from '~/utils/auth.server';
+
+export const loader: LoaderFunction = async ({ request }) => {
+  await requireUserId(request);
+  return redirect('/home');
+};
