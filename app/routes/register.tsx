@@ -1,13 +1,14 @@
-import { useState } from 'react';
 import { Layout } from '~/layout/layout';
+import { useActionData } from '@remix-run/react';
 import { ActionFunction } from '@remix-run/node';
 import { registerUser } from '~/utils/auth.server';
+import { RegisterForm } from '~/utils/types.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email = form.get('email');
   const password = form.get('password');
-  const fullName = form.get('fullname');
+  const fullName = form.get('fullName');
 
   if (!email || !password || !fullName) {
     return {
@@ -30,18 +31,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const [formField, setFormField] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-  });
-
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: string
-  ) => {
-    setFormField((form) => ({ ...form, [field]: event.target.value }));
-  };
+  const actionData = useActionData<RegisterForm>();
 
   return (
     <>
@@ -65,14 +55,13 @@ export default function Register() {
                   </label>
                   <input
                     id="user-name"
-                    name="name"
+                    name="fullName"
                     type="text"
                     autoComplete="name"
                     required
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Full name"
-                    value={formField.fullName}
-                    onChange={(e) => handleInputChange(e, 'fullName')}
+                    defaultValue={actionData?.fullName}
                   />
                 </div>
                 <div>
@@ -87,8 +76,7 @@ export default function Register() {
                     required
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Email address"
-                    value={formField.email}
-                    onChange={(e) => handleInputChange(e, 'email')}
+                    defaultValue={actionData?.email}
                   />
                 </div>
                 <div>
@@ -103,8 +91,7 @@ export default function Register() {
                     required
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Password"
-                    value={formField.password}
-                    onChange={(e) => handleInputChange(e, 'password')}
+                    defaultValue={actionData?.password}
                   />
                 </div>
               </div>
