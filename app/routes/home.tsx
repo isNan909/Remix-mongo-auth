@@ -24,13 +24,15 @@ export default function Index() {
         </p>
       </div>
       <div className="text-sm mt-[40px]">
-        <button
-          name="_action"
-          value="delete"
-          className="font-medium text-red-600 hover:text-red-500"
-        >
-          Log me out
-        </button>
+        <form action="/logout" method="POST">
+          <button
+            name="_action"
+            value="delete"
+            className="font-medium text-red-600 hover:text-red-500"
+          >
+            Log me out
+          </button>
+        </form>
       </div>
     </div>
   );
