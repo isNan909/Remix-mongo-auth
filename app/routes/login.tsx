@@ -4,7 +4,6 @@ import { ActionFunction } from '@remix-run/node';
 import { loginUser } from '~/utils/auth.server';
 
 export const action: ActionFunction = async ({ request }) => {
-  console.log('this is running');
   const form = await request.formData();
   const email = form.get('email')?.toString();
   const password = form.get('password')?.toString();

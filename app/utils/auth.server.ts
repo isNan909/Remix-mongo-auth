@@ -19,8 +19,8 @@ const storage = createCookieSessionStorage({
   },
 });
 
-export const registerUser = async (user: RegisterForm) => {
-  const userExists = await prisma.user.count({ where: { email: user.email } });
+export async function registerUser(form: RegisterForm) {
+  const userExists = await prisma.user.count({ where: { email: form.email } });
   if (userExists) {
     return json(
       { error: `User already exists with that email` },
@@ -28,12 +28,12 @@ export const registerUser = async (user: RegisterForm) => {
     );
   }
 
-  const newUser = await createUser(user);
+  const newUser = await createUser(form);
   if (!newUser) {
     return json(
       {
         error: `Something went wrong trying to create a new user.`,
-        fields: { email: user.email, password: user.password, fullName: user.fullName },
+        fields: { email: form.email, password: form.password, fullName: form.fullName },
       },
       { status: 400 }
     );
@@ -41,7 +41,7 @@ export const registerUser = async (user: RegisterForm) => {
   return createUserSession(newUser.id, "/");
 }
 
-export const loginUser = async ({ email, password }: LoginForm) => {
+export async function loginUser({ email, password }: LoginForm) {
   const user = await prisma.user.findUnique({
     where: { email },
   });

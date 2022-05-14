@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Layout } from '~/layout/layout';
 import { ActionFunction } from '@remix-run/node';
 import { registerUser } from '~/utils/auth.server';
-import { useActionData } from '@remix-run/react';
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
@@ -31,11 +30,10 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const actionData = useActionData();
   const [formField, setFormField] = useState({
-    fullName: actionData?.fields?.fullName,
-    email: actionData?.fields?.email,
-    password: actionData?.fields?.password,
+    fullName: '',
+    email: '',
+    password: '',
   });
 
   const handleInputChange = (
@@ -59,7 +57,7 @@ export default function Register() {
               </h2>
             </div>
 
-            <form method="POST">
+            <form method="post">
               <div>
                 <div>
                   <label htmlFor="email-address" className="sr-only">
