@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Layout } from '~/layout/layout';
-import { Link, useActionData } from '@remix-run/react';
+import { useActionData, Link } from '@remix-run/react';
 import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
-import { registerUser, getUser } from '~/utils/auth.server';
+import { loginUser, getUser } from '~/utils/auth.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   // If user has active session, redirect to the homepage
@@ -11,31 +11,20 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
-  const email = form.get('email');
-  const password = form.get('password');
-  const fullName = form.get('fullName');
+  const email = form.get('email')?.toString();
+  const password = form.get('password')?.toString();
 
-  if (!email || !password || !fullName) {
+  if (!email || !password)
     return {
       status: 400,
       body: 'Please provide email and password',
     };
-  }
 
-  if (
-    typeof email !== 'string' ||
-    typeof password !== 'string' ||
-    typeof fullName !== 'string'
-  ) {
-    throw new Error(`Form not submitted correctly.`);
-  }
-
-  const allFields = { email, password, fullName };
-  const user = await registerUser(allFields);
+  const user = await loginUser({ email, password });
   return user;
 };
 
-export default function Register() {
+export default function Login() {
   const actionData = useActionData();
   const [formError, setFormError] = useState(actionData?.error || '');
 
@@ -46,30 +35,15 @@ export default function Register() {
           <div className="max-w-md w-full space-y-8">
             <div>
               <span className="text-center text-slate-400 block">
-                Welcome fellas!
+                Welcome back!
               </span>
               <h2 className="text-center text-3xl font-extrabold text-gray-900">
-                Register your account
+                Log in to your account
               </h2>
             </div>
-
-            <form method="post">
-              <div>
-                <div>
-                  <label htmlFor="email-address" className="sr-only">
-                    Full name
-                  </label>
-                  <input
-                    id="user-name"
-                    name="fullName"
-                    type="text"
-                    autoComplete="name"
-                    required
-                    className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                    placeholder="Full name"
-                    defaultValue={actionData?.fullName}
-                  />
-                </div>
+            <form className="mt-8 space-y-6" action="#" method="POST">
+              <input type="hidden" name="remember" value="true" />
+              <div className="rounded-md shadow-sm -space-y-px">
                 <div>
                   <label htmlFor="email-address" className="sr-only">
                     Email address
@@ -101,17 +75,20 @@ export default function Register() {
                   />
                 </div>
               </div>
-              <button
-                type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-5"
-              >
-                Register account
-              </button>
+
               <div>
-                <p className="text-sm text-center mt-5">
-                  Already have an account?
+                <button
+                  type="submit"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Log in
+                </button>
+              </div>
+              <div>
+                <p className="text-sm text-center">
+                  I dont have an account?
                   <span className="underline pl-1 text-green-500">
-                    <Link to="/login">Login</Link>
+                    <Link to="/auth/register">Register</Link>
                   </span>
                 </p>
               </div>

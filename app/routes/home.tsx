@@ -5,7 +5,7 @@ import { Layout } from '~/layout/layout';
 
 export const loader: LoaderFunction = async ({ request }) => {
   // If user has active session, redirect to the homepage
-  return (await getUser(request)) ? null : redirect('/login');
+  return (await getUser(request)) ? null : redirect('/auth/login');
 };
 
 export const action: ActionFunction = async ({ request }) => {
