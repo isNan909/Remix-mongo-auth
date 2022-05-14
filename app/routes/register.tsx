@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Layout } from '~/layout/layout';
 import { ActionFunction } from '@remix-run/node';
 import { registerUser } from '~/utils/auth.server';
+import { useActionData } from '@remix-run/react';
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
@@ -9,7 +10,7 @@ export const action: ActionFunction = async ({ request }) => {
   const password = form.get('password');
   const fullName = form.get('fullname');
 
-  if (!email || !password || !fullName){
+  if (!email || !password || !fullName) {
     return {
       status: 400,
       body: 'Please provide email and password',
@@ -30,11 +31,20 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
+  const actionData = useActionData();
   const [formField, setFormField] = useState({
-    fullName: '',
-    email: '',
-    password: '',
+    fullName: actionData?.fields?.fullName,
+    email: actionData?.fields?.email,
+    password: actionData?.fields?.password,
   });
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: string
+  ) => {
+    setFormField((form) => ({ ...form, [field]: event.target.value }));
+  };
+
   return (
     <>
       <Layout>
@@ -48,9 +58,9 @@ export default function Register() {
                 Register your account
               </h2>
             </div>
-            <form className="mt-8 space-y-6" action="#" method="POST">
-              <input type="hidden" name="remember" value="true" />
-              <div className="rounded-md shadow-sm -space-y-px">
+
+            <form method="POST">
+              <div>
                 <div>
                   <label htmlFor="email-address" className="sr-only">
                     Full name
@@ -64,9 +74,7 @@ export default function Register() {
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Full name"
                     value={formField.fullName}
-                    onChange={(e) =>
-                      setFormField({ ...formField, fullName: e.target.value })
-                    }
+                    onChange={(e) => handleInputChange(e, 'fullName')}
                   />
                 </div>
                 <div>
@@ -82,9 +90,7 @@ export default function Register() {
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Email address"
                     value={formField.email}
-                    onChange={(e) =>
-                      setFormField({ ...formField, email: e.target.value })
-                    }
+                    onChange={(e) => handleInputChange(e, 'email')}
                   />
                 </div>
                 <div>
@@ -100,21 +106,16 @@ export default function Register() {
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Password"
                     value={formField.password}
-                    onChange={(e) =>
-                      setFormField({ ...formField, password: e.target.value })
-                    }
+                    onChange={(e) => handleInputChange(e, 'password')}
                   />
                 </div>
               </div>
-
-              <div>
-                <button
-                  type="submit"
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Register account
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-5"
+              >
+                Register account
+              </button>
             </form>
           </div>
         </div>

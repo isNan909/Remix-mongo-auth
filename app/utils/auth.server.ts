@@ -1,6 +1,6 @@
 import { redirect, json, createCookieSessionStorage } from "@remix-run/node";
-import { prisma } from "./prisma.server";
 import type { RegisterForm, LoginForm } from "./types.server";
+import { prisma } from "./prisma.server";
 import { createUser } from "./user.server";
 import bcrypt from "bcryptjs";
 
@@ -33,7 +33,7 @@ export const registerUser = async (user: RegisterForm) => {
     return json(
       {
         error: `Something went wrong trying to create a new user.`,
-        fields: { email: user.email, password: user.password },
+        fields: { email: user.email, password: user.password, fullName: user.fullName },
       },
       { status: 400 }
     );
