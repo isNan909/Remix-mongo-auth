@@ -1,7 +1,8 @@
-import { useState } from 'react';
 import { Layout } from '~/layout/layout';
+import { useActionData } from '@remix-run/react';
 import { ActionFunction } from '@remix-run/node';
 import { loginUser } from '~/utils/auth.server';
+import { LoginForm } from '~/utils/types.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
@@ -19,10 +20,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Login() {
-  const [formField, setFormField] = useState({
-    email: '',
-    password: '',
-  });
+  const actionData = useActionData<LoginForm>();
   return (
     <>
       <Layout>
@@ -51,10 +49,7 @@ export default function Login() {
                     required
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Email address"
-                    value={formField.email}
-                    onChange={(e) =>
-                      setFormField({ ...formField, email: e.target.value })
-                    }
+                    defaultValue={actionData?.email}
                   />
                 </div>
                 <div>
@@ -69,10 +64,7 @@ export default function Login() {
                     required
                     className="appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                     placeholder="Password"
-                    value={formField.password}
-                    onChange={(e) =>
-                      setFormField({ ...formField, password: e.target.value })
-                    }
+                    defaultValue={actionData?.password}
                   />
                 </div>
               </div>
@@ -80,7 +72,6 @@ export default function Login() {
               <div>
                 <button
                   type="submit"
-                  name="_action"
                   className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Log in
