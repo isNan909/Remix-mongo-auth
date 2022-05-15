@@ -1,11 +1,19 @@
-import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
+import {
+  ActionFunction,
+  LoaderFunction,
+  redirect,
+  json,
+} from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
 import { getUser } from '~/utils/auth.server';
 import { logout } from '~/utils/auth.server';
 import { Layout } from '~/layout/layout';
 
 export const loader: LoaderFunction = async ({ request }) => {
   // If user has active session, redirect to the homepage
-  return (await getUser(request)) ? null : redirect('/auth/login');
+  const userSession = await getUser(request);
+  if (userSession === null) return redirect('/auth/login');
+  return json({ userSession });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -13,19 +21,21 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Index() {
+  const { userSession } = useLoaderData();
+  const userName = userSession?.profile.fullName;
+  const userEmail = userSession?.email;
+
   return (
     <>
       <Layout>
         <div className="text-center m-[30vh] block">
           <div>
-            <small className="text-slate-400 pb-5 block">
-              You are Logged in!
-            </small>
+            <small className="text-slate-400 pb-5 block">You are Logged!</small>
             <h1 className="text-4xl text-green-600 font-bold pb-3">
               Welcome to Remix Application
             </h1>
             <p className="text-slate-400">
-              Configured with TailwindCSS and Prisma ORM using MongoDB
+              Name: {userName}, Email: {userEmail}
             </p>
           </div>
           <div className="text-sm mt-[40px]">
